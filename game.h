@@ -6,8 +6,12 @@ class Game {
 		const int ROWS= 6;
 		const int COLS = 7;
 		int board[6][7];
+
+
 	public:
-		Game() ;
+		Game();
+		bool placePiece(bool white, int col);
+		bool isColFull(int col);
 		void print();
 };
 
