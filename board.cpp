@@ -14,8 +14,6 @@ Board::Board(const Board &other) {
       board[r][c] = other.board[r][c];
     }
   }
-
-
 }
 void Board::print() {
 	for (int r = 0; r < ROWS; r++) {

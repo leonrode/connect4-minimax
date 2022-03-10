@@ -3,17 +3,12 @@
 #include <iostream>
 
 Game::Game() {
-	// activeBoard.placePiece(YELLOW, 4);
 	turn = RED;
-
 	playGame();
-	
 }
 
 
 void Game::playGame() {
-
-
 	bool won = false;
 	while (!won) {
 		// get user input
