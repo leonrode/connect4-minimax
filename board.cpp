@@ -1,5 +1,6 @@
 #include "board.h"
 #include <iostream>
+
 Board::Board() {
   for (int r = 0; r < ROWS; r++) {
     for (int c = 0; c < COLS; c++) {
@@ -18,10 +19,109 @@ Board::Board(const Board &other) {
 void Board::print() {
 	for (int r = 0; r < ROWS; r++) {
 		for (int c = 0; c < COLS; c++) {
-			std::cout << board[r][c] << " ";
+      std::cout << board[r][c] << " ";
 		}
 		std::cout << std::endl;
 	}
+}
+
+int Board::countThreeInARows(int color) {
+
+  int count = 0;
+  // rows
+  for (int row = 0; row < ROWS; row++) {
+    for (int col = 0; col < COLS - 3; col++) {
+      if (board[row][col] != color) continue;
+      if (board[row][col + 1] == color && board[row][col + 2] == color) {
+        count++;
+      }
+    }
+  }
+
+
+  // cols
+  for (int row = 0; row < ROWS - 3; row++) {
+    for (int col = 0; col < COLS; col++) {
+      if (board[row][col] != color) continue;
+
+      if (board[row+1][col] == color && board[row+2][col] == color) {
+        count++;
+      }
+    }
+  }
+
+  // up right diagonals
+  for (int row = 2; row < ROWS; row++) {
+    for (int col = 0; col < COLS - 2; col++) {
+      if (board[row][col] != color) continue;
+
+      if (board[row-1][col+1] == color && board[row-2][col+2] == color) {
+        count++;
+      }
+    }
+  }
+
+  // down right diagonals
+  for (int row = 0; row < ROWS - 2; row++) {
+    for (int col = 0; col < COLS - 2; col++) {
+      if (board[row][col] != color) continue;
+
+      if (board[row+1][col+1] == color && board[row+2][col+2] == color) {
+        count++;
+      }
+    }
+  }
+
+  return count;
+}
+int Board::countTwoInARows(int color) {
+
+  int count = 0;
+  // rows
+  for (int row = 0; row < ROWS; row++) {
+    for (int col = 0; col < COLS - 3; col++) {
+      if (board[row][col] != color) continue;
+      if (board[row][col + 1] == color) {
+        count++;
+      }
+    }
+  }
+
+
+  // cols
+  for (int row = 0; row < ROWS - 3; row++) {
+    for (int col = 0; col < COLS; col++) {
+      if (board[row][col] != color) continue;
+
+      if (board[row+1][col] == color) {
+        count++;
+      }
+    }
+  }
+
+  // up right diagonals
+  for (int row = 2; row < ROWS; row++) {
+    for (int col = 0; col < COLS - 2; col++) {
+      if (board[row][col] != color) continue;
+
+      if (board[row-1][col+1] == color) {
+        count++;
+      }
+    }
+  }
+
+  // down right diagonals
+  for (int row = 0; row < ROWS - 2; row++) {
+    for (int col = 0; col < COLS - 2; col++) {
+      if (board[row][col] != color) continue;
+
+      if (board[row+1][col+1] == color) {
+        count++;
+      }
+    }
+  }
+
+  return count;
 }
 
 
@@ -109,5 +209,5 @@ int Board::checkWin() {
 }
 
 bool Board::isGameOver() {
-  return isBoardFull() || checkWin();
+  return isBoardFull() || checkWin() != -1;
 }

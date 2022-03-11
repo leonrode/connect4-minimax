@@ -22,6 +22,11 @@ class Board {
     */
     bool isGameOver();
 
+    /*
+      Counts the number of three-in-a-rows by the specified color
+    */
+    int countThreeInARows(int color);
+    int countTwoInARows(int color);
   private:
     int board[6][7];
 
