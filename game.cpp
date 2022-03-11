@@ -73,7 +73,7 @@ int Game::getNextTurn() {
 
 int Game::bestComputerMove(int depth) {
 	int bestCol	 = -1;
-	int bestEval = std::numeric_limits<int>::max();
+	int bestEval = std::numeric_limits<int>::min();
 	for (int c = 0; c < COLS; c++) {
 		Board child = activeBoard;
 		bool success = child.placePiece(turn, c);
@@ -81,7 +81,7 @@ int Game::bestComputerMove(int depth) {
 		if (!success) continue;
 
 		int evaluation = minimax(child, depth, std::numeric_limits<int>::min(), std::numeric_limits<int>::max(),  turn);
-		if (evaluation < bestEval) {
+		if (evaluation > bestEval) {
 			bestEval = evaluation;
 			bestCol = c;
 		}
