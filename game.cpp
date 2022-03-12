@@ -34,6 +34,12 @@ void Game::playGame() {
 			break;
 		}
 
+		if (activeBoard.checkWin() == RED) {
+			std::cout << "Red player wins!\n";
+			break;
+
+		}
+
 
 		std::cout << "red threats" << activeBoard.countThreeInARows(RED) << " yellow threats " << activeBoard.countThreeInARows(YELLOW) << "\n";
 		turn = getNextTurn();
@@ -73,7 +79,7 @@ int Game::getNextTurn() {
 
 int Game::bestComputerMove(int depth) {
 	int bestCol	 = -1;
-	int bestEval = std::numeric_limits<int>::min();
+	int bestEval = std::numeric_limits<int>::max();
 	for (int c = 0; c < COLS; c++) {
 		Board child = activeBoard;
 		bool success = child.placePiece(turn, c);
@@ -81,7 +87,7 @@ int Game::bestComputerMove(int depth) {
 		if (!success) continue;
 
 		int evaluation = minimax(child, depth, std::numeric_limits<int>::min(), std::numeric_limits<int>::max(),  turn);
-		if (evaluation > bestEval) {
+		if (evaluation < bestEval) {
 			bestEval = evaluation;
 			bestCol = c;
 		}
@@ -117,6 +123,7 @@ int Game::evaluateBoard(Board board) {
 	const int yellowTwoThreats = board.countTwoInARows(YELLOW);
 
 	// the more redThreats, the better the position for Red (+)
+
 	sum += redThreeThreats * THREE_WEIGHT;
 	sum -= yellowThreeThreats * THREE_WEIGHT;
 
