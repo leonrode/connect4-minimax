@@ -13,7 +13,7 @@ class Board {
 
     bool isBoardFull();
 
-    int checkWin();
+    bool checkWin(int color);
 
     bool canPlaceInColumn(int col);
 

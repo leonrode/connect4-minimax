@@ -30,7 +30,7 @@ int Board::countThreeInARows(int color) {
   int count = 0;
   // rows
   for (int row = 0; row < ROWS; row++) {
-    for (int col = 0; col < COLS - 3; col++) {
+    for (int col = 0; col < COLS - 2; col++) {
       if (board[row][col] != color) continue;
       if (board[row][col + 1] == color && board[row][col + 2] == color) {
         count++;
@@ -40,7 +40,7 @@ int Board::countThreeInARows(int color) {
 
 
   // cols
-  for (int row = 0; row < ROWS - 3; row++) {
+  for (int row = 0; row < ROWS - 2; row++) {
     for (int col = 0; col < COLS; col++) {
       if (board[row][col] != color) continue;
 
@@ -79,7 +79,7 @@ int Board::countTwoInARows(int color) {
   int count = 0;
   // rows
   for (int row = 0; row < ROWS; row++) {
-    for (int col = 0; col < COLS - 3; col++) {
+    for (int col = 0; col < COLS - 1; col++) {
       if (board[row][col] != color) continue;
       if (board[row][col + 1] == color) {
         count++;
@@ -89,7 +89,7 @@ int Board::countTwoInARows(int color) {
 
 
   // cols
-  for (int row = 0; row < ROWS - 3; row++) {
+  for (int row = 0; row < ROWS - 1; row++) {
     for (int col = 0; col < COLS; col++) {
       if (board[row][col] != color) continue;
 
@@ -101,7 +101,7 @@ int Board::countTwoInARows(int color) {
 
   // up right diagonals
   for (int row = 2; row < ROWS; row++) {
-    for (int col = 0; col < COLS - 2; col++) {
+    for (int col = 0; col < COLS - 1; col++) {
       if (board[row][col] != color) continue;
 
       if (board[row-1][col+1] == color) {
@@ -111,8 +111,8 @@ int Board::countTwoInARows(int color) {
   }
 
   // down right diagonals
-  for (int row = 0; row < ROWS - 2; row++) {
-    for (int col = 0; col < COLS - 2; col++) {
+  for (int row = 0; row < ROWS - 1; row++) {
+    for (int col = 0; col < COLS - 1; col++) {
       if (board[row][col] != color) continue;
 
       if (board[row+1][col+1] == color) {
@@ -133,7 +133,7 @@ bool Board::placePiece(int color, int col) {
 		r++;
 	}
 
-	board[r][col] = color == RED ? 2 : 1;
+	board[r][col] = color;
 
 	return true;
 }
@@ -160,14 +160,15 @@ bool Board::canPlaceInColumn(int col) {
   return board[0][col] == 0;
 }
 
-int Board::checkWin() {
+bool Board::checkWin(int color) {
   // rows
   for (int row = 0; row < ROWS; row++) {
     for (int col = 0; col < COLS - 3; col++) {
-      if (board[row][col] == 0) continue;
-      int cur = board[row][col];
-      if (board[row][col + 1] == cur && board[row][col + 2] == cur && board[row][col + 3] == cur) {
-        return cur;
+      if (board[row][col] != color) continue;
+
+      if (board[row][col + 1] == color && board[row][col + 2] == color && board[row][col + 3] == color) {
+        // std::cout << color << " row win.\n";
+        return true;
       }
     }
   }
@@ -175,10 +176,10 @@ int Board::checkWin() {
   // cols
   for (int row = 0; row < ROWS - 3; row++) {
     for (int col = 0; col < COLS; col++) {
-      if (board[row][col] == 0) continue;
-      int cur = board[row][col];
-      if (board[row+1][col] == cur && board[row+2][col] == cur && board[row+3][col] == cur) {
-        return cur;
+      if (board[row][col] != color) continue;
+
+      if (board[row+1][col] == color && board[row+2][col] == color && board[row+3][col] == color) {
+        return true;
       }
     }
   }
@@ -186,10 +187,10 @@ int Board::checkWin() {
   // up right diagonals
   for (int row = 3; row < ROWS; row++) {
     for (int col = 0; col < COLS -3; col++) {
-      if (board[row][col] == 0) continue;
-      int cur = board[row][col];
-      if (board[row-1][col+1] == cur && board[row-2][col+2] == cur && board[row-3][col+3] == cur) {
-        return cur;
+      if (board[row][col] != color) continue;
+
+      if (board[row-1][col+1] == color && board[row-2][col+2] == color && board[row-3][col+3] == color) {
+        return true;
       }
     }
   }
@@ -197,17 +198,17 @@ int Board::checkWin() {
   // down right diagonals
   for (int row = 0; row < ROWS - 3; row++) {
     for (int col = 0; col < COLS - 3; col++) {
-      if (board[row][col] == 0) continue;
-      int cur = board[row][col];
-      if (board[row+1][col+1] == cur && board[row+2][col+2] == cur && board[row+3][col+3] == cur) {
-        return cur;
+      if (board[row][col] != color) continue;
+
+      if (board[row+1][col+1] == color && board[row+2][col+2] == color && board[row+3][col+3] == color) {
+        return true;
       }
     }
   }
 
-  return -1;
+  return false;
 }
 
 bool Board::isGameOver() {
-  return isBoardFull() || checkWin() != -1;
+  return isBoardFull() || checkWin(YELLOW) || checkWin(RED);
 }

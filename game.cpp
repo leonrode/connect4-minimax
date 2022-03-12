@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <limits>
+#include <algorithm>
 
 Game::Game() {
 	turn = RED;
@@ -34,7 +35,7 @@ void Game::playGame() {
 			break;
 		}
 
-		if (activeBoard.checkWin() == RED) {
+		if (activeBoard.checkWin(RED)) {
 			std::cout << "Red player wins!\n";
 			break;
 
@@ -45,16 +46,16 @@ void Game::playGame() {
 		turn = getNextTurn();
 
 		std::cout << "Computer is placing a piece.\n";
-		int computerMove = bestComputerMove(4);
+		int computerMove = bestComputerMove(5);
 
 
 		activeBoard.placePiece(turn, computerMove);
 
 		activeBoard.print();
-		if (activeBoard.checkWin() == RED) {
+		if (activeBoard.checkWin(RED)) {
 			std::cout << "Red player wins!\n";
 			won = true;
-		} else if (activeBoard.checkWin() == YELLOW) {
+		} else if (activeBoard.checkWin(YELLOW)) {
 			std::cout << "Yellow computer wins!\n";
 			won = true;
 
@@ -88,6 +89,7 @@ int Game::bestComputerMove(int depth) {
 
 		int evaluation = minimax(child, depth, std::numeric_limits<int>::min(), std::numeric_limits<int>::max(),  turn);
 		if (evaluation < bestEval) {
+			std::cout << c << " " << evaluation << "\n";
 			bestEval = evaluation;
 			bestCol = c;
 		}
@@ -101,8 +103,8 @@ int Game::evaluateBoard(Board board) {
 
 
 
-	const int THREE_WEIGHT = 999999;
-	const int TWO_WEIGHT = 9999;
+	const int THREE_WEIGHT = 10;
+	const int TWO_WEIGHT = 1;
 
 	// evaluation table
 	for (int r = 0; r < ROWS; r++) {
@@ -134,15 +136,15 @@ int Game::evaluateBoard(Board board) {
 
 	// std::cout << "red threats: " << redThreats << "yellowThreats: " << yellowThreats << "\n";
 
-	if (board.checkWin() == RED) {
+	if (board.checkWin(RED)) {
 		// std::cout << "red won\n";
 
-		return 999999;
+		return 100000;
 
 	}
-	else if (board.checkWin() == YELLOW) {
+	else if (board.checkWin(YELLOW)) {
 		// std::cout << "YELLOW won\n";
-		return -999999;
+		return -100000;
 	}
 	else if (board.isBoardFull()) return 0;
 	return sum;
@@ -157,47 +159,53 @@ int Game::minimax(Board board, int depth, int alpha, int beta, const int TURN) {
 		return evaluateBoard(board);
 	}
 
-
+	// std::cout << TURN << " t\n ";
 	if (TURN == RED) {
 		int maxEval = std::numeric_limits<int>::min();
 		// for each possible move in position
 		for (int col = 0; col < COLS; col++) {
-			if (board.canPlaceInColumn(col)) {
-				// make copy of current board
-				Board childBoard = board;
-				childBoard.placePiece(TURN, col);
 
-				int evaluation = minimax(childBoard, depth - 1, alpha, beta, YELLOW);
-				maxEval = evaluation > maxEval ? evaluation : maxEval;
-				alpha = alpha > evaluation ? alpha : evaluation;
-				if (beta <= alpha) {
-					break;
-				}
+			// make copy of current board
+			Board childBoard = board;
 
+			bool success = childBoard.placePiece(TURN, col);
+			if (!success) continue;
+
+			int evaluation = minimax(childBoard, depth - 1, alpha, beta, YELLOW);
+
+			maxEval = std::max(evaluation, maxEval);
+			alpha = std::max(alpha, evaluation);
+			if (beta <= alpha) {
+				break;
 			}
+
+
 		}
 
 		return maxEval;
-	} else {
+	} else if (turn == YELLOW) {
 		int minEval = std::numeric_limits<int>::max();
 		// for each possible move in position
 		for (int col = 0; col < COLS; col++) {
-			if (board.canPlaceInColumn(col)) {
+
 				// make copy of current board
 				Board childBoard = board;
-				childBoard.placePiece(TURN, col);
-
+				bool success = childBoard.placePiece(TURN, col);
+				if (!success) continue;
 				int evaluation = minimax(childBoard, depth - 1, alpha, beta, RED);
-				minEval = evaluation < minEval ? evaluation : minEval;
-				beta = beta < evaluation ? beta : evaluation;
+				if (evaluation >= 100000) {
+
+				// std::cout << evaluation << "minEvaluation\n";
+				}
+
+				minEval = std::min(evaluation, minEval);
+				beta = std::min(evaluation, beta);
 				if (beta <= alpha) {
 					break;
 				}
-
-			}
 		}
 
-
+		// std::cout << "minEval" << minEval << "\n";
 		return minEval;
 
 	}
